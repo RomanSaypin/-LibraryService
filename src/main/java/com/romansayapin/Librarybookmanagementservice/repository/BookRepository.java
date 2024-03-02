@@ -8,5 +8,5 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface BookRepository extends JpaRepository<Book, Long> {
-
+    Optional<Book> deleteBookById(Long id);
 }

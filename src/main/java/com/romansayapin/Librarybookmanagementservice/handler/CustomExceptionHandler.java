@@ -1,10 +1,14 @@
-package com.romansayapin.Librarybookmanagementservice.hendler;
+package com.romansayapin.Librarybookmanagementservice.handler;
 
+import com.romansayapin.Librarybookmanagementservice.exception.BookNotFoundByIdException;
+import com.romansayapin.Librarybookmanagementservice.response.Response;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -15,7 +19,6 @@ import java.util.Map;
 
 @ControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
-
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
@@ -34,5 +37,12 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         objectBody.put("Errors", exceptionErrors);
 
         return new ResponseEntity<>(objectBody, status);
+    }
+
+
+    @ExceptionHandler(BookNotFoundByIdException.class)
+    public ResponseEntity<Response> handleException(BookNotFoundByIdException e) {
+        Response response = new Response(e.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

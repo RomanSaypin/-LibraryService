@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Slf4j
 @Tag(name = "Books Controller")
 @RequiredArgsConstructor
 @RestController
@@ -64,9 +62,10 @@ public class BookController {
     @Operation(
             summary = "Обновляет информацию о книге"
     )
-    @PutMapping("/{id}")
-    public Book updateBook(@RequestBody Book book) {
-        return bookService.updateBookInformation(book);
+    @PutMapping
+    public ResponseEntity<BookDto> updateBook(@RequestBody Book book) {
+        return ResponseEntity.status(HttpStatus.OK).
+                body(modelMapper.map(bookService.updateBookInformation(book), BookDto.class));
     }
 
     //
@@ -74,7 +73,9 @@ public class BookController {
             summary = "Удаляет книгу по id"
     )
     @DeleteMapping("/{id}")
-    public void deleteBook(@PathVariable Long id) {
-        bookService.deleteBook(id);
+    public ResponseEntity<BookDto> deleteBook(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK).
+                body(modelMapper.map(bookService.deleteBook(id), BookDto.class)
+                );
     }
 }

@@ -1,13 +1,14 @@
 package com.romansayapin.Librarybookmanagementservice.servise.imp;
 
 import com.romansayapin.Librarybookmanagementservice.entity.Book;
+import com.romansayapin.Librarybookmanagementservice.exception.BookNotFoundByIdException;
 import com.romansayapin.Librarybookmanagementservice.repository.BookRepository;
 import com.romansayapin.Librarybookmanagementservice.servise.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -15,8 +16,9 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
 
     @Override
+    @Transactional
     public Book saveDataBase(Book book) {
-       return bookRepository.save(book);
+        return bookRepository.save(book);
     }
 
     //
@@ -28,21 +30,36 @@ public class BookServiceImpl implements BookService {
     //
     @Override
     public Book getBook(Long id) {
-        return bookRepository.findById(id).orElseThrow();
+        return bookRepository.findById(id)
+                .orElseThrow(() -> new BookNotFoundByIdException(
+                        String.format("Книги по id %d нет базе данных", id))
+                );
     }
 
     //
     @Override
+    @Transactional
     public Book updateBookInformation(Book book) {
-        if (!bookRepository.existsById(book.getId())) {
-            return null;
-        }
-        return bookRepository.save(book);
+       return bookRepository.findById(book.getId())
+                .map(bookUpdate -> {
+                    bookUpdate.setAuthor(book.getAuthor());
+                    bookUpdate.setTitle(book.getTitle());
+                    bookUpdate.setYear(book.getYear());
+                    bookUpdate.setGenre(book.getGenre());
+                    return bookUpdate;
+                })
+                .orElseThrow(() -> new BookNotFoundByIdException(
+                String.format("Книги по id %d нет базе данных", book.getId()))
+                );
+
     }
 
     //
     @Override
-    public void deleteBook(Long id) {
-        bookRepository.deleteById(id);
+    @Transactional
+    public Book deleteBook(Long id) {
+        return bookRepository.deleteBookById(id).orElseThrow(() -> new BookNotFoundByIdException(
+                String.format("Книги по id %d нет базе данных", id))
+        );
     }
 }
