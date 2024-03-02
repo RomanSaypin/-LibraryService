@@ -1,8 +1,13 @@
 package com.romansayapin.Librarybookmanagementservice.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.UUID;
 
 
 @Getter
@@ -15,12 +20,15 @@ import lombok.experimental.FieldDefaults;
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-     long id;
-     String title;
-     String author;
-     String genre;
+    Long id;
+    @NotNull(message = "Книга должна иметь название!!!")
+    String title;
+    @NotNull(message = "Книга должна иметь имя автора!!!")
+    String author;
+    @NotNull(message = "Книга должна иметь жанр!!!")
+    String genre;
     @Column(name = "year_of_publishing")
-     int year;
+    int year;
 
     @Override
     public String toString() {

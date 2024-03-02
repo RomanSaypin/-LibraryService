@@ -1,12 +1,17 @@
 package com.romansayapin.Librarybookmanagementservice.controller;
 
+import com.romansayapin.Librarybookmanagementservice.dto.BookDto;
+import com.romansayapin.Librarybookmanagementservice.entity.Book;
 import com.romansayapin.Librarybookmanagementservice.servise.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.romansayapin.Librarybookmanagementservice.entity.Book;
 
 import java.util.List;
 
@@ -14,51 +19,62 @@ import java.util.List;
 @Tag(name = "Books Controller")
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/api/books")
 public class BookController {
 
     private final BookService bookService;
+    private final ModelMapper modelMapper;
 
     @Operation(
             summary = "Добавляет новую книгу в базу"
     )
-    @PostMapping("/books")
-    public void addBook(@RequestBody Book book) {
-        bookService.saveDataBase(book);
+    @PostMapping
+    public ResponseEntity<BookDto> addBook(@Valid @RequestBody Book book) {
+        return ResponseEntity.status(HttpStatus.OK).body(
+                modelMapper.map(bookService.saveDataBase(book), BookDto.class)
+        );
     }
 
     //
     @Operation(
             summary = "Возвращает список всех книг"
     )
-    @GetMapping("/books")
-    public List<Book> getAllBooks() {
-        return bookService.getListBook();
+    @GetMapping
+    public ResponseEntity<List<BookDto>> getAllBooks() {
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(bookService.getListBook()
+                        .stream()
+                        .map(x -> modelMapper.map(x, BookDto.class))
+                        .toList()
+                );
     }
 
     //
     @Operation(
             summary = "Возвращает книгу по id"
     )
-    @GetMapping("/books/{id}")
-    public Book getBook(@PathVariable long id) {
-        return bookService.getBook(id);
+    @GetMapping("/{id}")
+    public ResponseEntity<BookDto> getBook(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK).
+                body(modelMapper.map(bookService.getBook(id), BookDto.class));
     }
 
     //
     @Operation(
             summary = "Обновляет информацию о книге"
     )
-    @PutMapping("/books/{id}")
-    public void updateBook(@RequestBody Book book) {
-     bookService.updateBookInformation(book);
+    @PutMapping("/{id}")
+    public Book updateBook(@RequestBody Book book) {
+        return bookService.updateBookInformation(book);
     }
 
     //
     @Operation(
             summary = "Удаляет книгу по id"
     )
-    @DeleteMapping("/books/{id}")
-    public void deleteBook(@PathVariable long id) {
+    @DeleteMapping("/{id}")
+    public void deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);
     }
 }
