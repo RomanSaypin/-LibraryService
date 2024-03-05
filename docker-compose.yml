@@ -1,0 +1,25 @@
+version: '3.7'
+services:
+  pg_demo:
+     image: postgres
+     restart: always
+     environment:
+       POSTGRES_DB: "Library_db"
+       POSTGRES_USER: "postgres"
+       POSTGRES_PASSWORD: "pass"
+     ports:
+       - "127.0.0.1:5433:5432"
+  app:
+    restart: always
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - pg_demo
+    environment:
+      SPRING_DATASOURCE PASSWORD:
+        "pass"
+      SPRING_DATASOURCE USER:
+        "postgres"
+      SPRING_DATASOURCE URL:
+        'jdbc:postgresql://pg_demo:5433/Library_db'

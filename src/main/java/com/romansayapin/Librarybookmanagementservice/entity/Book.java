@@ -26,6 +26,13 @@ public class Book {
     @Column(name = "year_of_publishing")
     int year;
 
+    public Book(String title, String author, String genre, int year) {
+        this.title = title;
+        this.author = author;
+        this.genre = genre;
+        this.year = year;
+    }
+
     @Override
     public String toString() {
         return "Book{" +

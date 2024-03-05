@@ -28,7 +28,7 @@ public class BookController {
     )
     @PostMapping
     public ResponseEntity<BookDto> addBook(@Valid @RequestBody Book book) {
-        return ResponseEntity.status(HttpStatus.OK).body(
+        return ResponseEntity.status(HttpStatus.CREATED).body(
                 modelMapper.map(bookService.saveDataBase(book), BookDto.class)
         );
     }
@@ -41,7 +41,8 @@ public class BookController {
     public ResponseEntity<List<BookDto>> getAllBooks() {
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(bookService.getListBook()
+                .body(
+                        bookService.getListBook()
                         .stream()
                         .map(x -> modelMapper.map(x, BookDto.class))
                         .toList()
@@ -55,7 +56,9 @@ public class BookController {
     @GetMapping("/{id}")
     public ResponseEntity<BookDto> getBook(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).
-                body(modelMapper.map(bookService.getBook(id), BookDto.class));
+                body(
+                        modelMapper.map(bookService.getBook(id), BookDto.class)
+                );
     }
 
     //
@@ -65,7 +68,9 @@ public class BookController {
     @PutMapping
     public ResponseEntity<BookDto> updateBook(@RequestBody Book book) {
         return ResponseEntity.status(HttpStatus.OK).
-                body(modelMapper.map(bookService.updateBookInformation(book), BookDto.class));
+                body(
+                        modelMapper.map(bookService.updateBookInformation(book), BookDto.class)
+                );
     }
 
     //
@@ -75,7 +80,8 @@ public class BookController {
     @DeleteMapping("/{id}")
     public ResponseEntity<BookDto> deleteBook(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).
-                body(modelMapper.map(bookService.deleteBook(id), BookDto.class)
+                body(
+                        modelMapper.map(bookService.deleteBook(id), BookDto.class)
                 );
     }
 }

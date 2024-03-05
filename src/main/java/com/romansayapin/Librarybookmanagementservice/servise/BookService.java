@@ -3,7 +3,6 @@ package com.romansayapin.Librarybookmanagementservice.servise;
 import com.romansayapin.Librarybookmanagementservice.entity.Book;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface BookService {
 
@@ -12,5 +11,6 @@ public interface BookService {
     Book getBook(Long id);
     Book updateBookInformation(Book book);
     Book deleteBook(Long id);
+
 
 }
